@@ -428,6 +428,9 @@ class MySqlAdapter {
             case 'Short':
                 s = 'smallint(6)';
                 break;
+            case 'Json':
+                s = 'json';
+                break;
             default:
                 s = 'int(11)';
                 break;

@@ -87,6 +87,18 @@ class TestApplication extends DataApplication {
         await context.db.closeAsync();
     }
 
+    async tryDropDatabase() {
+        let context = new NamedDataContext('master');
+        context.getConfiguration = () => {
+            return this.configuration;
+        };
+        const exists = await context.db.database(testConnectionOptions.database).existsAsync();
+        if (exists === true) {
+            await context.db.executeAsync(`DROP DATABASE ${testConnectionOptions.database};`);
+        }
+        await context.db.closeAsync();
+    }
+
     async finalize() {
         const service = this.getConfiguration().getStrategy(DataCacheStrategy);
         if (typeof service.finalize === 'function') {

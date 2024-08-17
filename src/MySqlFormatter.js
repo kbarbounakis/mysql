@@ -51,6 +51,27 @@ class MySqlFormatter extends SqlFormatter {
         //convert timestamp to mysql server timezone (by using date object timezone offset)
         return sprintf('CONVERT_TZ(\'%s\',\'%s\', @@session.time_zone)', datetime, timezone);
     }
+
+    /**
+     * @param {*} expr
+     * @return {string}
+     */
+    $jsonGet(expr) {
+        if (typeof expr.$name !== 'string') {
+            throw new Error('Invalid json expression. Expected a string');
+        }
+        const parts = expr.$name.split('.');
+        const extract = this.escapeName(parts.splice(0, 2).join('.'));
+        return `json_extract(${extract}, '$.${parts.join('.')}')`;
+    }
+
+    /**
+     * @param {*} expr
+     * @return {string}
+     */
+    $jsonArray(expr) {
+        return `json_each(${this.escapeName(expr)})`;
+    }
 }
 
 export {
